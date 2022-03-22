@@ -45,7 +45,7 @@ export default function Home({coffeeStores}) {
         setError(error.message);
       }
     }
-  }, [state.latLong])
+  }, [state.latLong, dispatch])
 
   return (
     <div className={styles.container}>
@@ -60,7 +60,7 @@ export default function Home({coffeeStores}) {
         {errorStatus.length ? <p className={styles.error}>{errorStatus}</p> : null}
         {error.length ? <p className={styles.error}>{error}</p> : null}
         <div className={styles.heroImage}>
-          <Image src="/static/coffee.png" width={700} height={400} />
+          <Image src="/static/coffee.png" width={700} alt="coffee" height={400} />
         </div>
         {
           state.coffeeStores.length > 0 && (

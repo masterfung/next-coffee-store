@@ -11,6 +11,15 @@ import { isEmpty } from "../../utils/utils";
 import { fetcher } from "../../lib/fetcher";
 import useSWR from "swr";
 
+interface CoffeeStore {
+  id: string,
+  name: string,
+  address: string,
+  voting: number,
+  imgUrl: string,
+  neighbourhood: string,
+}
+
 export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeData();
   const paths = coffeeStores.map(coffeeStore => {
@@ -28,9 +37,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({params}) {
   const coffeeStores = await fetchCoffeeData();
-  const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
-    return coffeeStore.id.toString() === params.id; //dynamic id
-  });
+  const findCoffeeStoreById = coffeeStores.find((coffeeStore: CoffeeStore) => coffeeStore.id.toString() === params.id);
   return {
     props: {
       coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
@@ -40,10 +47,6 @@ export async function getStaticProps({params}) {
 
 const CoffeeStore = (initialProps) => {
   const router = useRouter();
-
-  if (router.isFallback) {
-    return <div>Loading...</div>
-  }
 
   const id = router.query.id;
 
@@ -81,10 +84,9 @@ const CoffeeStore = (initialProps) => {
   }
 
   useEffect(() => {
-    if (isEmpty(initialProps.coffeeStore) && coffeeStores.length > 0) {
-      const coffeeStoreFromContext = coffeeStores.find((coffeeStore) => {
-        return coffeeStore.id.toString() === id; //dynamic id
-      });
+    if (!router.isFallback) {
+      if (isEmpty(initialProps.coffeeStore) && coffeeStores.length > 0) {
+      const coffeeStoreFromContext = coffeeStores.find((coffeeStore: CoffeeStore) => coffeeStore.id.toString() === id);
       if (coffeeStoreFromContext) {
         setCoffeeStore(coffeeStoreFromContext);
         handleCreateCoffeeStore(coffeeStoreFromContext);
@@ -92,6 +94,8 @@ const CoffeeStore = (initialProps) => {
     } else {
       handleCreateCoffeeStore(initialProps.coffeeStore);
     }
+  }
+    
   }, [id, initialProps, initialProps.coffeeStore, coffeeStores]);
   
   const {
@@ -155,21 +159,26 @@ const CoffeeStore = (initialProps) => {
           src={
             imgUrl ||
             "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
-          } alt={name} width={600} height={360} className={styles.storeImgWrapper} />
+          } 
+          alt={name} 
+          width={600} 
+          height={360} 
+          className={styles.storeImgWrapper}
+           />
         </div>
         
 
         <div className={cls("glass", styles.col2)}>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/marker.svg" width={24} height={24} />
+            <Image src="/static/icons/marker.svg" width={24} alt="address icon" height={24} />
             <p className={styles.text}>{address}</p>
           </div>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/neighborhood.svg" width={24} height={24} />
+            <Image src="/static/icons/neighborhood.svg" width={24} alt="neighbourhood icon" height={24} />
             <p className={styles.text}>{neighbourhood}</p>
           </div>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/heart.svg" width={24} height={24} />
+            <Image src="/static/icons/heart.svg" width={24} alt="voting icon" height={24} />
             <p className={styles.text}>{votingCount}</p>
           </div>
           <button 
