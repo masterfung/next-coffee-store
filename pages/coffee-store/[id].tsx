@@ -96,7 +96,7 @@ const CoffeeStore = (initialProps) => {
     }
   }
     
-  }, [id, initialProps, initialProps.coffeeStore, coffeeStores]);
+  }, [id, initialProps, initialProps.coffeeStore, coffeeStores, router.isFallback]);
   
   const {
     address = "",
